@@ -15,16 +15,25 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.location.LocationManagerCompat.isLocationEnabled
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import dimaster.app.weatherout.Constants.Constants
+import dimaster.app.weatherout.Models.WeatherResponse
+import dimaster.app.weatherout.Network.WeatherInterface
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -87,13 +96,65 @@ class MainActivity : AppCompatActivity() {
 
             Log.d("TAG", "latitude: $latitude and longitude $longitude")
 
-            getLocationWeatherDet()
+            if (latitude != null && longitude != null) {
+                getLocationWeatherDet(latitude, longitude)
+            }
         }
     }
 
-    private fun getLocationWeatherDet(){
+    private fun getLocationWeatherDet(latitude: Double, longitude: Double){
         if(Constants.isNetworkAvailable(this@MainActivity)){
-            Toast.makeText(this@MainActivity, "Internet is available", Toast.LENGTH_SHORT).show()
+            //Init of retrofit
+            val retrofit: Retrofit = Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            //preparing the services
+            val service: WeatherInterface = retrofit
+                .create(WeatherInterface::class.java)
+
+            //prepearing listCall
+            val listCall: Call<WeatherResponse> = service.getWeather(
+                latitude,
+                longitude,
+                Constants.APP_ID
+            )
+
+            Log.d("TAG", "getLocationWeatherDet: $listCall")
+
+            listCall.enqueue(object: Callback<WeatherResponse>{
+                override fun onResponse(
+                    call: Call<WeatherResponse>,
+                    response: Response<WeatherResponse>
+
+                ) {
+                    if(response.isSuccessful){
+                        val weatherList: WeatherResponse? = response.body()
+                        Log.i("TAG", "onResponse result: $weatherList")
+                    } else {
+                        val rc = response.code()
+
+                        Log.d("TAG", "onResponse: "+response.message())
+
+                        when(rc){
+                            400 ->{
+                                Log.e("TAG", "Error 400")
+                            } 404 ->{
+                                Log.e("TAG", "Error 404")
+                            } else ->{
+                                Log.e("TAG", "Error  ${response.code()}")
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                    Log.e("TAG", "Big error $t")
+                }
+
+            })
+
         } else {
             Toast.makeText(this@MainActivity, "No internet is available", Toast.LENGTH_SHORT).show()
 
