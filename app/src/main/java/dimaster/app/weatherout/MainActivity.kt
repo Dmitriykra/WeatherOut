@@ -24,6 +24,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import dimaster.app.weatherout.Constants.Constants
 
 class MainActivity : AppCompatActivity() {
 
@@ -85,6 +86,16 @@ class MainActivity : AppCompatActivity() {
             val longitude = lastLocation?.longitude
 
             Log.d("TAG", "latitude: $latitude and longitude $longitude")
+
+            getLocationWeatherDet()
+        }
+    }
+
+    private fun getLocationWeatherDet(){
+        if(Constants.isNetworkAvailable(this@MainActivity)){
+            Toast.makeText(this@MainActivity, "Internet is available", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this@MainActivity, "No internet is available", Toast.LENGTH_SHORT).show()
 
         }
     }
