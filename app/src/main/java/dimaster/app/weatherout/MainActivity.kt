@@ -1,6 +1,7 @@
 package dimaster.app.weatherout
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -38,6 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : AppCompatActivity() {
 
     private lateinit var fusLocProCl: FusedLocationProviderClient
+    private var progressDialog: Dialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -123,6 +125,9 @@ class MainActivity : AppCompatActivity() {
 
             Log.d("TAG", "getLocationWeatherDet: $listCall")
 
+            //show dialog  before enqueue
+            showCustomDialog()
+
             listCall.enqueue(object: Callback<WeatherResponse>{
                 override fun onResponse(
                     call: Call<WeatherResponse>,
@@ -130,9 +135,15 @@ class MainActivity : AppCompatActivity() {
 
                 ) {
                     if(response.isSuccessful){
+
+                        hideDialog()
+
                         val weatherList: WeatherResponse? = response.body()
                         Log.i("TAG", "onResponse result: $weatherList")
                     } else {
+
+                        hideDialog()
+
                         val rc = response.code()
 
                         Log.d("TAG", "onResponse: "+response.message())
@@ -150,6 +161,9 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+
+                    hideDialog()
+
                     Log.e("TAG", "Big error $t")
                 }
 
@@ -187,5 +201,17 @@ class MainActivity : AppCompatActivity() {
         val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    private fun  showCustomDialog(){
+        progressDialog = Dialog(this)
+        progressDialog!!.setContentView(R.layout.custom_progress_dialog)
+        progressDialog!!.show()
+    }
+
+    private fun hideDialog(){
+        if(progressDialog != null){
+            progressDialog!!.dismiss()
+        }
     }
 }
