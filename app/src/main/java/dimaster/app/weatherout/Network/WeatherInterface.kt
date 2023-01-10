@@ -14,6 +14,9 @@ interface WeatherInterface {
         @Query("lon")
         lon: Double,
 
+        @Query("cnt")
+        cnt: Int,
+
         @Query("appid")
         appid: String?
     ): Call<WeatherResponse>

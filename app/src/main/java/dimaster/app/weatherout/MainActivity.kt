@@ -14,8 +14,11 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.location.LocationManagerCompat.isLocationEnabled
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -40,10 +43,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var fusLocProCl: FusedLocationProviderClient
     private var progressDialog: Dialog? = null
+    private var weatherTv: TextView? = null
+    private var conditionTv: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
+        setContentView(R.layout.activity_main_reserv)
+        //setContentView(R.layout.activity_main)
+        weatherTv = findViewById(R.id.weather_tv)
+        conditionTv = findViewById(R.id.condition_tv)
         fusLocProCl = LocationServices.getFusedLocationProviderClient(this)
 
         if(!isLocationEnabled()){
@@ -105,7 +112,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getLocationWeatherDet(latitude: Double, longitude: Double){
-        if(Constants.isNetworkAvailable(this@MainActivity)){
+        if(Constants.isNetworkAvailable(this@MainActivity)) {
             //Init of retrofit
             val retrofit: Retrofit = Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
@@ -116,10 +123,11 @@ class MainActivity : AppCompatActivity() {
             val service: WeatherInterface = retrofit
                 .create(WeatherInterface::class.java)
 
-            //prepearing listCall
             val listCall: Call<WeatherResponse> = service.getWeather(
                 latitude,
                 longitude,
+                //here past calendar day
+                Constants.CNT_DAY,
                 Constants.APP_ID
             )
 
@@ -128,17 +136,20 @@ class MainActivity : AppCompatActivity() {
             //show dialog  before enqueue
             showCustomDialog()
 
-            listCall.enqueue(object: Callback<WeatherResponse>{
+            listCall.enqueue(object : Callback<WeatherResponse> {
                 override fun onResponse(
                     call: Call<WeatherResponse>,
                     response: Response<WeatherResponse>
 
                 ) {
-                    if(response.isSuccessful){
+                    if (response.isSuccessful) {
 
                         hideDialog()
 
                         val weatherList: WeatherResponse? = response.body()
+                        if (weatherList != null) {
+                            setupUi(weatherList)
+                        }
                         Log.i("TAG", "onResponse result: $weatherList")
                     } else {
 
@@ -146,14 +157,16 @@ class MainActivity : AppCompatActivity() {
 
                         val rc = response.code()
 
-                        Log.d("TAG", "onResponse: "+response.message())
+                        Log.d("TAG", "onResponse: " + response.message())
 
-                        when(rc){
-                            400 ->{
+                        when (rc) {
+                            400 -> {
                                 Log.e("TAG", "Error 400")
-                            } 404 ->{
+                            }
+                            404 -> {
                                 Log.e("TAG", "Error 404")
-                            } else ->{
+                            }
+                            else -> {
                                 Log.e("TAG", "Error  ${response.code()}")
                             }
                         }
@@ -169,9 +182,9 @@ class MainActivity : AppCompatActivity() {
 
             })
 
+
         } else {
             Toast.makeText(this@MainActivity, "No internet is available", Toast.LENGTH_SHORT).show()
-
         }
     }
 
@@ -212,6 +225,14 @@ class MainActivity : AppCompatActivity() {
     private fun hideDialog(){
         if(progressDialog != null){
             progressDialog!!.dismiss()
+        }
+    }
+
+    private fun setupUi(weatherList: WeatherResponse){
+        for (i in weatherList.weather.indices){
+            Log.d("TAG", "setupUi: ${weatherList.weather.toString()}")
+            weatherTv?.text = weatherList.weather[i].main
+            conditionTv?.text = weatherList.weather[i].description
         }
     }
 }

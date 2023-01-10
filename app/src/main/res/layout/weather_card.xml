@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="5dp"
+    android:focusable="true"
+    android:clickable="true"
+    android:id="@+id/mainLayout"
+    app:cardCornerRadius="5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/dayOfWeek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Day of week"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:id="@+id/skyType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sky is clear"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dayOfWeek" />
+
+        <TextView
+            android:layout_marginTop="20dp"
+            android:id="@+id/temp_numb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10"
+            android:textSize="36sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/skyType" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="°C"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/temp_numb"
+            app:layout_constraintTop_toTopOf="@+id/temp_numb"/>
+
+        <ImageView
+            android:layout_marginTop="20dp"
+            android:id="@+id/speedWindImg"
+            android:layout_width="24sp"
+            android:layout_height="24sp"
+            android:src="@drawable/wind"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/temp_numb" />
+
+        <TextView
+            android:layout_marginStart="10dp"
+            android:id="@+id/speedWindValTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/speedWindImg"
+            app:layout_constraintStart_toEndOf="@+id/speedWindImg"
+            app:layout_constraintTop_toTopOf="@+id/speedWindImg" />
+
+        <ImageView
+            android:id="@+id/airHumidity"
+            android:layout_marginTop="10dp"
+            android:layout_width="24sp"
+            android:layout_height="24sp"
+            android:src="@drawable/cloud"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/speedWindImg" />
+
+        <TextView
+            android:layout_marginStart="10dp"
+            android:id="@+id/airHumidityValTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="55%"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/airHumidity"
+            app:layout_constraintStart_toEndOf="@+id/airHumidity"
+            app:layout_constraintTop_toTopOf="@+id/airHumidity" />
+
+        <ImageView
+            android:layout_marginEnd="10dp"
+            android:id="@+id/mainImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/sunny"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.cardview.widget.CardView>
