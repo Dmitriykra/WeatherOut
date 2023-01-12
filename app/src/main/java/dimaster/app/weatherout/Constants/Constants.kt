@@ -4,11 +4,18 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import java.text.SimpleDateFormat
+import java.util.*
 
 object Constants {
 
-    const val APP_ID: String = "b6b4a92a1838e5b93fd961549c9722e9"
+    const val APP_ID: String = "dd147eb20ed12a81d17607901452fdde"
+    //const val APP_ID: String = "172f17b40bd0d2237ee355a039ff2118"
+    //const val APP_ID: String = "b193609ce3975a2cb599bde9fc539295"
+    //const val APP_ID: String = "b6b4a92a1838e5b93fd961549c9722e9"
     const val BASE_URL: String =  "https://api.openweathermap.org/data/"
+    const val PREF_NAME: String = "weather"
+    const val RESP_DATA: String = "resp_data"
 
     fun isNetworkAvailable(context: Context) : Boolean {
         val connectivityManager = context
